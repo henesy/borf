@@ -1,6 +1,10 @@
 package main
 
 import (
+	"strings"
+	"io"
+	"errors"
+	"fmt"
 )
 
 // Determine the Kind of a word
@@ -31,7 +35,58 @@ func whatKind(w string) Kind {
 
 // Take text and turn it into tokens
 func tokenize(text string) ([]Token, error) {
-	tokens := make([]Token, 0, maxTokens)
+	tokens := make([]Token, 0, maxTokens)	
+	reader := strings.NewReader(text)
+	
+	inString := false
+	var builder strings.Builder
+	
+	// Check if a rune is whitespace
+	spacing := func(r rune) bool {
+		whitespace := []rune{' ', '\t', '\n'}
+		
+		for _, w := range whitespace {
+			if r == w {
+				return true
+			}
+		}
+		
+		return false
+	}
+	
+	// Read each rune
+	loop:
+	for {
+		r, _, err := reader.ReadRune()
+		if err != nil {
+			if err == io.EOF {
+				break loop
+			}
+			
+			return nil, errors.New(fmt.Sprint("could not read runes - ", err))
+		}
+		
+		// Skip whitespace - close out the builder and append the token if not building a string
+		if spacing(r) && !inString {
+			continue loop
+		}
+		
+		// Handle string management
+		if r == '"' {
+			if inString {
+				// In a string - close it out and append the token
+			} else {
+				// Not in a string - reset the builder and append our rune
+			}
+		}
+		
+		_, err = builder.WriteRune(r)
+		if err != nil {
+			return nil, errors.New(fmt.Sprint("could not build token - ", err))
+		}
+		
+		fmt.Printf("» reading = \"%v\"\n", string(r))
+	}
 
 	return tokens, nil
 }

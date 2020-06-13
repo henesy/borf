@@ -18,19 +18,22 @@ var (
 	symbols map[string]Symbol	// Pre-defined symbols
 )
 
+// Abstract types
 type Kind int
 const (
 	Integral	Kind	= iota	// An integer number
-	Operation					// A procedure
+	Procedure					// A procedure
 	Value						// Stores a value (token-only)
 	Constant					// Immutable value
 	String						// A long series of interwoven threads
 	NIL							// Sentinel values are bad
 )
 
+
 // Represents a symbol
 type Symbol struct {
-	Kind				// Type of the symbol
+	Kind					// Type of the symbol
+	Eval func()(error)		// Perform side-effects of this Symbol being pop'd(?)
 }
 
 // Represents a token
@@ -48,6 +51,7 @@ func main() {
 	reader := bufio.NewReader(os.Stdin)
 
 	symbols = map[string]Symbol {
+		"+":	Symbol{Procedure, Add},
 	}
 
 	// Main loop
