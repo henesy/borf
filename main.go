@@ -52,6 +52,8 @@ func main() {
 
 	symbols = map[string]Symbol {
 		"+":	Symbol{Procedure, Add},
+		".":	Symbol{Procedure, Pop},
+		"peek":	Symbol{Procedure, Peek},
 	}
 
 	// Main loop

@@ -21,6 +21,7 @@ The following symbols are reserved:
 	newline
 	."
 	pop"
+	peek
 	=
 	<
 	>

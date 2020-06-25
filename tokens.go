@@ -8,29 +8,44 @@ import (
 )
 
 // Determine the Kind of a word
-func whatKind(w string) Kind {
+func whatKind(w string) (Kind, error) {
 	if len(w) < 1 {
-		return NIL
+		return NIL, errors.New(fmt.Sprint("empty word"))
 	}
 
 	// Test if this is a known symbol
 	if s, ok := symbols[w]; ok {
-		return s.Kind
+		return s.Kind, nil
 	}
 	
 	// TODO - test for 0x, 0o, 0b (hex, octal, binary)
 	
 	// Test for a number constant
 	if w[0] >= '0' && w[0] <= '9' {
-		return Constant
+		return Constant, nil
 	}
 	
 	// Test for a string
 	if w[0] == '"' {
-		return String
+		return String, nil
 	}
 
-	return Value
+	return Value, nil
+}
+
+// Take a string and return a token
+func string2token(s string) (Token, error) {
+	var t Token
+	t.body = s
+	
+	kind, err := whatKind(s)
+	if err != nil {
+		return t, err
+	}
+	
+	t.Kind = kind
+	
+	return t, nil
 }
 
 // Take text and turn it into tokens
@@ -68,6 +83,19 @@ func tokenize(text string) ([]Token, error) {
 		
 		// Skip whitespace - close out the builder and append the token if not building a string
 		if spacing(r) && !inString {
+			if builder.Len() > 0 {
+				str := builder.String()
+				
+				token, err := string2token(str)
+				if err != nil {
+					return nil, err
+				}
+				
+				tokens = append(tokens, token)
+			}
+			
+			builder.Reset()
+		
 			continue loop
 		}
 		
@@ -75,8 +103,32 @@ func tokenize(text string) ([]Token, error) {
 		if r == '"' {
 			if inString {
 				// In a string - close it out and append the token
+				str := builder.String()
+				
+				token, err := string2token(str)
+				if err != nil {
+					return nil, err
+				}
+				
+				// We know it's a string
+				token.Kind = String
+				
+				tokens = append(tokens, token)
+				
+				inString = false
+				
+				builder.Reset()
+				
+				continue loop
+				
 			} else {
-				// Not in a string - reset the builder and append our rune
+				// Not in a string - build a new string token - reset the builder
+				builder.Reset()
+				//builder.WriteRune(r)
+				
+				inString = true
+				
+				continue loop
 			}
 		}
 		
@@ -86,6 +138,18 @@ func tokenize(text string) ([]Token, error) {
 		}
 		
 		fmt.Printf("» reading = \"%v\"\n", string(r))
+	}
+	
+	// Catch trailing word, will never be a string
+	if builder.Len() > 0 {
+		str := builder.String()
+		
+		token, err := string2token(str)
+		if err != nil {
+			return nil, err
+		}
+		
+		tokens = append(tokens, token)
 	}
 
 	return tokens, nil
