@@ -49,9 +49,7 @@ func Add(stack *Stack) (*Stack, error) {
 			return nil, err
 		}
 		
-		stack = proposed
-		
-		return stack, nil
+		return proposed, nil
 	
 	default:
 		return nil, errors.New(fmt.Sprintf("types %v and %v cannot be added together", left.Kind, right.Kind))
