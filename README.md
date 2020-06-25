@@ -38,3 +38,9 @@ err: could not push word #0: {"0x49e3a0" → "Procedure"} - stack is too small t
 Goodbye ☺
 ; 
 ```
+
+## Specification
+
+[See spec.md](./spec.md)
+
+
