@@ -12,8 +12,9 @@ The following symbols are reserved:
 	/
 	.
 	pop
+	:				Maybe?
 	;
-	->
+	->				Function declaration?
 	duplicate
 	drop
 	swap
@@ -21,7 +22,6 @@ The following symbols are reserved:
 	newline
 	."
 	pop"
-	peek
 	=
 	<
 	>
@@ -41,7 +41,14 @@ Tentatively reserved:
 	loop
 	begin
 	until
-	
+
+Special REPL commands:
+
+	size
+	peek
+	show
+	bye
+
 ## Syntax 
 
 Symbols (words) are whitespace delimited, therefore, even the `;` symbol must be separated from other runes by whitespace. 

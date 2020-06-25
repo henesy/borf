@@ -22,7 +22,26 @@ func whatKind(w string) (Kind, error) {
 	
 	// Test for a number constant
 	if w[0] >= '0' && w[0] <= '9' {
-		return Constant, nil
+		if strings.Contains(w, "0x") {
+			// Hexadecimal (base 16)
+			// TODO
+		}
+		
+		if strings.Contains(w, "0o") {
+			// Octal (base 8)
+			// TODO
+		}
+		
+		if strings.Contains(w, "0b") {
+			// Binary (base 2)
+			// TODO
+		}
+	
+		if strings.Contains(w, ".") {
+			return Real, nil
+		}
+		
+		return Integral, nil
 	}
 	
 	// Test for a string
@@ -30,7 +49,7 @@ func whatKind(w string) (Kind, error) {
 		return String, nil
 	}
 
-	return Value, nil
+	return NIL, errors.New(fmt.Sprintf(`could not determine type of "%s"`, w))
 }
 
 // Take a string and return a token
@@ -103,6 +122,7 @@ func tokenize(text string) ([]Token, error) {
 		if r == '"' {
 			if inString {
 				// In a string - close it out and append the token
+				builder.WriteRune(r)
 				str := builder.String()
 				
 				token, err := string2token(str)
@@ -124,7 +144,7 @@ func tokenize(text string) ([]Token, error) {
 			} else {
 				// Not in a string - build a new string token - reset the builder
 				builder.Reset()
-				//builder.WriteRune(r)
+				builder.WriteRune(r)
 				
 				inString = true
 				
@@ -137,7 +157,7 @@ func tokenize(text string) ([]Token, error) {
 			return nil, errors.New(fmt.Sprint("could not build token - ", err))
 		}
 		
-		fmt.Printf("» reading = \"%v\"\n", string(r))
+		//fmt.Printf("» reading = \"%v\"\n", string(r))
 	}
 	
 	// Catch trailing word, will never be a string
