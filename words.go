@@ -63,10 +63,6 @@ func tokens2words(tokens []Token) ([]Word, error) {
 			return nil, errors.New(fmt.Sprintf("token #%d is of unknown type", i))
 		}
 
-
-
-		fmt.Println("word = ", word)
-
 		words = append(words, word)
 	}
 
