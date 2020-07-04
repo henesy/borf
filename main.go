@@ -54,6 +54,7 @@ func main() {
 		"/":	Word{Procedure, Divide},
 		".":	Word{Procedure, Pop},
 		"pop":	Word{Procedure, Pop},
+		"swap":	Word{Procedure, Swap},
 		// TODO - more builtins
 	}
 

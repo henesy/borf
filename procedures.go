@@ -5,6 +5,38 @@ import (
 	"fmt"
 )
 
+/*
+	Procedures are called when they're pushed to the stack.
+
+	Procedures take the form:
+
+		func Foo(stack *Stack) (*Stack, error)
+
+	The `*Stack` returned should be the input `*Stack` after the procedure is performed.
+*/
+
+// Swap the two top elements on the stack
+func Swap(stack *Stack) (*Stack, error) {
+	if size := stack.Size(); size < 2 {
+		return nil, errors.New("stack must have at least 2 elements to swap")
+	}
+
+	stack, first := stack.Pop()
+	stack, second := stack.Pop()
+
+	stack, err := stack.Push(first)
+	if err != nil {
+		return nil, err
+	}
+
+	stack, err = stack.Push(second)
+	if err != nil {
+		return nil, err
+	}
+
+	return stack, nil
+}
+
 // The / operation
 func Divide(stack *Stack) (*Stack, error) {
 	if size := stack.Size(); size < 2 {
